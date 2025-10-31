@@ -1,6 +1,6 @@
 base_model = "google/gemma-3-270m-it" # @param ["google/gemma-3-270m-it","google/gemma-3-1b-it","google/gemma-3-4b-it","google/gemma-3-12b-it","google/gemma-3-27b-it"] {"allow-input":true}
-checkpoint_dir = "/mnt/d/ru_norm_gemma"
-learning_rate = 5e-5
+checkpoint_dir = "./ru_norm_gemma"
+learning_rate = 1e-6
 
 from datasets import load_dataset
 
@@ -32,13 +32,10 @@ args = SFTConfig(
     output_dir=checkpoint_dir,              # directory to save and repository id
     max_length=512,                         # max sequence length for model and packing of the dataset
     packing=False,                          # Groups multiple samples in the dataset into a single sequence
-    num_train_epochs=5,                     # number of training epochs
-    per_device_train_batch_size=4,          # batch size per device during training
+    num_train_epochs=10,                     # number of training epochs
+    per_device_train_batch_size=64,          # batch size per device during training
     gradient_checkpointing=False,           # Caching is incompatible with gradient checkpointing
     optim="adamw_torch_fused",              # use fused adamw optimizer
-    logging_steps=10,                        # log every step
-    save_strategy="epoch",                  # save checkpoint every epoch
-    eval_strategy="steps",                  # evaluate checkpoint every epoch
     learning_rate=learning_rate,            # learning rate
     fp16=True if torch_dtype == torch.float16 else False,   # use float16 precision
     bf16=True if torch_dtype == torch.bfloat16 else False,  # use bfloat16 precision
@@ -48,6 +45,16 @@ args = SFTConfig(
         "add_special_tokens": False, # Template with special tokens
         "append_concat_token": True, # Add EOS token as separator token between examples
     }
+
+    logging_steps=100,                   
+    save_strategy="steps",         # save every N steps
+    save_steps=500,                # save checkpoint every 500 steps
+    save_total_limit=5,            # keep only 5 most recent/best checkpoints
+    eval_strategy="steps",         # run evaluation every N steps
+    eval_steps=500,                # evaluate every 500 steps
+    load_best_model_at_end=True,   # reload the best checkpoint at end
+    metric_for_best_model="eval_loss",
+    greater_is_better=False,       # smaller eval_loss = better model
 )
 
 from trl import SFTTrainer
