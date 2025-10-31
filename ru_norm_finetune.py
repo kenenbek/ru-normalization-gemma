@@ -30,10 +30,10 @@ torch_dtype = model.dtype
 
 args = SFTConfig(
     output_dir=checkpoint_dir,              # directory to save and repository id
-    max_length=512,                         # max sequence length for model and packing of the dataset
+    max_length=256,                         # max sequence length for model and packing of the dataset
     packing=False,                          # Groups multiple samples in the dataset into a single sequence
     num_train_epochs=10,                     # number of training epochs
-    per_device_train_batch_size=32,          # batch size per device during training
+    per_device_train_batch_size=16,          # batch size per device during training
     gradient_checkpointing=False,           # Caching is incompatible with gradient checkpointing
     optim="adamw_torch_fused",              # use fused adamw optimizer
     learning_rate=learning_rate,            # learning rate
