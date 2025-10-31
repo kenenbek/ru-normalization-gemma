@@ -44,7 +44,7 @@ args = SFTConfig(
     dataset_kwargs={
         "add_special_tokens": False, # Template with special tokens
         "append_concat_token": True, # Add EOS token as separator token between examples
-    }
+    },
 
     logging_steps=100,                   
     save_strategy="steps",         # save every N steps
